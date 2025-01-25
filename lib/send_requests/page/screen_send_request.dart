@@ -3,7 +3,6 @@ import 'package:intl/intl.dart'; // For formatting dates
 import 'package:provider/provider.dart';
 import 'dart:ui' as ui;
 
-import 'package:screen_send_request/Core/Utils/custom_components/drawer.dart';
 import 'package:screen_send_request/send_requests/Provider/send_request_provider.dart';
 
 class RequestCreationScreen extends StatefulWidget {
@@ -235,7 +234,7 @@ class _RequestCreationScreenState extends State<RequestCreationScreen> {
                             endDate,
                             2, //SubstituteEmployeeId will be taken from api
                             1, //Employee Id from token
-                            "Itinerar");
+                            selectedButton == "مأمورية" ? ['', ''] : null);
                       } else {
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                             content: Text(
