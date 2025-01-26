@@ -5,36 +5,47 @@ import 'package:screen_send_request/send_requests/Data/send_request_model.dart';
 
 class SendRequestService {
   static Dio dio = Dio();
+  static String token =
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJFbXBsb3llZUlkIjoiMTAwNSIsIkVtcGxveWVlTmFtZSI6IkFtbWFyIiwiRW1wbG95ZWVSb2xlIjoiTWFuYWdlciIsImV4cCI6MTczOTExNzI2OCwiaXNzIjoiUmVxdWVzdE1hbmFnZW1lbnRTeXN0ZW0iLCJhdWQiOiJFTHNld2VkeUVtcGxveWVlcyJ9.K_P63UwizjeRHkicQLbYVAl7B50F9YIiF7qQvP78824';
+  static Future<dynamic> sendRequest(
+      {String? title,
+      String? type,
+      DateTime? startDate,
+      DateTime? endDate,
+      int? substituteEmployeeId,
+      int? employeeId,
+      String? itinerar}) async {
+    const String baseUrl = 'http://156.214.215.246:8080/api';
+    const String url = '$baseUrl/Transaction/PostTransaction';
 
-  static Future<SendRequestModel> sendRequest(
-      String? Title,
-      String? Type,
-      var StartDate,
-      var EndDate,
-      int? SubstituteEmployeeId,
-      int? EmployeeId,
-      var Itinerar) async {
-    const url = 'http://41.35.237.81:8080/api/Transaction/PostTransaction ';
-
-    var response = await dio.post(url,
-        data: {
-          "Title": Title,
-          "Type": Type,
-          "StartDate": StartDate,
-          "EndDate": EndDate,
-          "SubstituteEmployeeId": SubstituteEmployeeId,
-          "EmployeeId": EmployeeId,
-          "Itinerar": Itinerar
-        },
-        options: Options(
-          headers: {
-            'Content-Type': 'application/json',
+    try {
+      var response = await dio.post(url,
+          data: {
+            "Title": title,
+            "Type": type,
+            "StartDate": startDate?.toIso8601String(),
+            "EndDate": endDate?.toIso8601String(),
+            "SubstituteEmployeeId": substituteEmployeeId,
+            "EmployeeId": employeeId,
+            "Itinerar": itinerar,
           },
-        ));
-    if (response.statusCode == 200) {
-      return SendRequestModel.fromJson(response.data);
-    } else {
-      throw ServerException(errModel: ErrorModel.responseInfo(response));
+          options: Options(
+            headers: {
+              'Authorization': 'Bearer $token',
+            },
+          ));
+
+      if (response.statusCode == 200) {
+        return SendRequestModel.fromJson(response.data);
+      } else if (response.statusCode == 400) {
+        return SendRequestModel.fromJson(response.data);
+      } else {
+        String errorMessage =
+            response.data['message'] ?? 'Unknown error occurred.';
+        throw Exception(errorMessage);
+      }
+    } catch (e) {
+      throw Exception(e.toString());
     }
   }
 }
