@@ -1,14 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:screen_send_request/send_requests/Controller/request_service.dart';
+import 'package:screen_send_request/send_requests/Controller/substitute_employee_service.dart';
+import 'package:screen_send_request/send_requests/Data/get_substitute_employee_model.dart';
 import 'package:screen_send_request/send_requests/Data/send_request_model.dart';
 import 'package:dio/dio.dart';
 import 'package:screen_send_request/send_requests/widgets/dialog_alert.dart';
 
 class SendRequestProvider extends ChangeNotifier {
   SendRequestModel? sendRequestModel;
-
+  List<GetSubstituteEmployeeModel> employees = [];
   bool _isLoading = false;
   bool get isLoading => _isLoading;
+
+  Future<void> getSubstituteEmployee() async {
+    employees = await SubstituteEmployeeService.getSubstituteEmployee();
+    notifyListeners();
+  }
 
   Future<void> sendRequestProv(
       BuildContext context,
