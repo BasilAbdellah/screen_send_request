@@ -29,17 +29,19 @@ class _RequestCreationScreenState extends State<RequestCreationScreen> {
   final Map<String, String> transactionVacationType = {
     'عارضة': 'CasualLeave',
     'اعتيادية': 'RegularLeave',
-    'غياب بأذن': 'ExcusedAbsent',
-    'غياب بدون بأذن': 'UnexcusedAbsent',
+  };
+  final Map<String, String> PartialVacationType = {
     'نصف يوم': 'HalfDay',
     'ربع يوم': 'QuarterDay',
   };
 
-  String selectedVacationType = 'اعتيادية'; // Default displayed value;
-  String mappedVacationType = 'RegularLeave'; // Default mapped value
+  String? selectedVacationType; // Default displayed value;
+  String? mappedVacationType; // Default mapped value
   String selectedButton = 'إجازة'; // Default selected button
+  String selectedPartialVacationType = 'اختر  نوع الاجازة الجزئية';
   String? selectedEmployeeName; // Selected substitute employee name
   int? substituteEmployeeId; // Substitute employee ID
+  bool _isPartialVacationSelected = false;
 
   @override
   void initState() {
@@ -48,8 +50,10 @@ class _RequestCreationScreenState extends State<RequestCreationScreen> {
       selectedButton = buttonMapping['إجازة']!;
     });
     // Fetch employee data on screen initialization
-    Future.microtask(() =>
-        Provider.of<SendRequestProvider>(context, listen: false).employees);
+    var data = Future.microtask(() =>
+        Provider.of<SendRequestProvider>(context, listen: false)
+            .getSubstituteEmployee());
+    print('Employee data: ${data}');
   }
 
   Widget build(BuildContext context) {
@@ -161,48 +165,85 @@ class _RequestCreationScreenState extends State<RequestCreationScreen> {
                                   print(formatDate(startDate));
                                 });
                               }),
-                              _buildDateField(context, 'إلى:', endDate, (date) {
-                                setState(() {
-                                  endDate = date;
-                                  print(formatDate(endDate));
-                                });
-                              }),
-                            ],
-                          ),
-                          SizedBox(height: 8),
-                          Row(
-                            children: [
-                              Checkbox(
-                                value: false,
-                                onChanged: (value) {},
-                              ),
-                              Text('إجازة جزئية'),
-                            ],
-                          ),
-                          SizedBox(height: 8),
-                          Row(
-                            children: [
-                              Text('النوع: '),
-                              DropdownButton<String>(
-                                value: selectedVacationType,
-                                items: transactionVacationType.keys
-                                    .map((String key) {
-                                  return DropdownMenuItem(
-                                    value: key,
-                                    child: Text(key),
-                                  );
-                                }).toList(),
-                                onChanged: (value) {
+                              Visibility(
+                                visible: !_isPartialVacationSelected,
+                                child: _buildDateField(context, 'إلى:', endDate,
+                                    (date) {
                                   setState(() {
-                                    selectedVacationType = value!;
-                                    mappedVacationType =
-                                        transactionVacationType[value]!;
-                                    print(
-                                        'Selected Arabic value: $selectedVacationType');
-                                    print(
-                                        'Mapped English value: $mappedVacationType');
+                                    endDate = date;
+                                    print(formatDate(endDate));
                                   });
-                                },
+                                }),
+                              )
+                            ],
+                          ),
+                          SizedBox(height: 8),
+                          Row(
+                            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                children: [
+                                  Text('النوع: '),
+                                  DropdownButton<String>(
+                                    value: (_isPartialVacationSelected
+                                            ? PartialVacationType.containsKey(
+                                                selectedVacationType)
+                                            : transactionVacationType
+                                                .containsKey(
+                                                    selectedVacationType))
+                                        ? selectedVacationType
+                                        : null, // Ensure valid selection
+                                    items: (_isPartialVacationSelected
+                                            ? PartialVacationType
+                                            : transactionVacationType)
+                                        .keys
+                                        .map((String key) {
+                                      return DropdownMenuItem(
+                                        value: key,
+                                        child: Text(key),
+                                      );
+                                    }).toList(),
+                                    hint: Text('اختر نوع الإجازة'),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        selectedVacationType = value!;
+                                        mappedVacationType =
+                                            _isPartialVacationSelected
+                                                ? PartialVacationType[value]!
+                                                : transactionVacationType[
+                                                    value]!;
+
+                                        // 🖨 Print selected values
+                                        print(
+                                            'Selected Arabic Type: $selectedVacationType');
+                                        print(
+                                            'Mapped English Type: $mappedVacationType');
+                                      });
+                                    },
+                                  ),
+                                  SizedBox(width: 16),
+                                  Row(
+                                    children: [
+                                      Checkbox(
+                                        value: _isPartialVacationSelected,
+                                        onChanged: (value) {
+                                          setState(() {
+                                            _isPartialVacationSelected = value!;
+                                            selectedVacationType =
+                                                ''; // Reset selection
+                                            mappedVacationType =
+                                                ''; // Reset mapped value
+
+                                            // 🖨 Print checkbox state
+                                            print(
+                                                'Is Partial Vacation Selected: $_isPartialVacationSelected');
+                                          });
+                                        },
+                                      ),
+                                      Text('إجازة جزئية'),
+                                    ],
+                                  ),
+                                ],
                               ),
                             ],
                           ),
@@ -211,6 +252,7 @@ class _RequestCreationScreenState extends State<RequestCreationScreen> {
                             children: [
                               Text('البديل: '),
                               DropdownButton<String>(
+                                menuMaxHeight: 200,
                                 value: selectedEmployeeName,
                                 hint: Text('اختر اسم الموظف'),
                                 items: provider.employees.map((employee) {
@@ -254,11 +296,15 @@ class _RequestCreationScreenState extends State<RequestCreationScreen> {
                         sendRequestProvider.sendRequestProv(
                           context,
                           selectedButton,
-                          mappedVacationType,
+                          _isPartialVacationSelected
+                              ? PartialVacationType[selectedVacationType] ??
+                                  '' // Use PartialVacationType if checked
+                              : transactionVacationType[selectedVacationType] ??
+                                  '', // Otherwise, use transactionVacationType,
                           startDate,
                           endDate,
                           substituteEmployeeId, // SubstituteEmployeeId
-                          1007, // Employee ID from token
+                          3, // Employee ID from token
                           selectedButton == "مأمورية" ? ['', ''] : null,
                         );
                       },
