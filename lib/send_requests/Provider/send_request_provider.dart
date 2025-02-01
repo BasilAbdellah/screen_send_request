@@ -21,8 +21,8 @@ class SendRequestProvider extends ChangeNotifier {
       BuildContext context,
       String? Title,
       String? Type,
-      var StartDate,
-      var EndDate,
+      DateTime? StartDate,
+      DateTime? EndDate,
       int? SubstituteEmployeeId,
       int? EmployeeId,
       var Itinerar) async {

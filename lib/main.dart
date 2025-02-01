@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:screen_send_request/Core/NTP/ntp.dart';
 import 'package:screen_send_request/send_requests/Provider/send_request_provider.dart';
 import 'package:screen_send_request/send_requests/page/screen_send_request.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await SynchronizedTime.initialize();
   runApp(const MyApp());
 }
 

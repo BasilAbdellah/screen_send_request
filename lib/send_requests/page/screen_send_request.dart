@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:screen_send_request/Core/NTP/ntp.dart';
 import 'dart:ui' as ui;
 
 import 'package:screen_send_request/send_requests/Provider/send_request_provider.dart';
@@ -58,271 +59,277 @@ class _RequestCreationScreenState extends State<RequestCreationScreen> {
 
   Widget build(BuildContext context) {
     final sendRequestProvider = Provider.of<SendRequestProvider>(context);
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'إنشاء طلب',
-          style: TextStyle(color: Colors.white),
-        ),
-        centerTitle: true,
-        leading: IconButton(
-          icon: Icon(Icons.menu, color: Colors.white),
-          onPressed: () {},
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.arrow_forward, color: Colors.white),
+    return SafeArea(
+      child: Scaffold(
+        resizeToAvoidBottomInset: true,
+        appBar: AppBar(
+          title: Text(
+            'إنشاء طلب',
+            style: TextStyle(color: Colors.white),
+          ),
+          centerTitle: true,
+          leading: IconButton(
+            icon: Icon(Icons.menu, color: Colors.white),
             onPressed: () {},
           ),
-        ],
-        backgroundColor: Color(0xff313131),
-      ),
-      body: Consumer<SendRequestProvider>(
-        builder: (context, provider, child) {
-          return Directionality(
-            textDirection: ui.TextDirection.rtl,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Curved background behind the buttons
-                Container(
-                  decoration: BoxDecoration(
-                    color: Color(0xff313131),
-                    borderRadius: BorderRadius.only(
-                      bottomRight: Radius.circular(50),
+          actions: [
+            IconButton(
+              icon: Icon(Icons.arrow_forward, color: Colors.white),
+              onPressed: () {},
+            ),
+          ],
+          backgroundColor: Color(0xff313131),
+        ),
+        body: Consumer<SendRequestProvider>(
+          builder: (context, provider, child) {
+            return Directionality(
+              textDirection: ui.TextDirection.rtl,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Curved background behind the buttons
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Color(0xff313131),
+                      borderRadius: BorderRadius.only(
+                        bottomRight: Radius.circular(50),
+                      ),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        _buildToggleButton('إجازة'),
+                        _buildToggleButton('مأمورية'),
+                      ],
                     ),
                   ),
-                  padding: const EdgeInsets.symmetric(vertical: 20),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _buildToggleButton('إجازة'),
-                      _buildToggleButton('مأمورية'),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 16),
-                // Rest of the UI
-                Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Card(
-                    elevation: 4,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Center(
-                            child: Text(
-                              'طلب الإجازة',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
+                  SizedBox(height: 16),
+                  // Rest of the UI
+                  Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Card(
+                      elevation: 4,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Center(
+                              child: Text(
+                                'طلب الإجازة',
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
-                          ),
-                          Center(
-                            child: Container(
-                                width: 70,
-                                child: Divider(color: Color(0xff4A5060))),
-                          ),
-                          SizedBox(height: 10),
-                          Text(
-                            'المدير : أحمد أحمد محمد أحمد',
-                            style: TextStyle(fontSize: 18),
-                          ),
-                          Text(
-                            'الإدارة: السويدي',
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          SizedBox(height: 16),
-                          Center(
-                            child: Container(
-                                width: 180,
-                                child: Divider(
-                                  color: Color(0xffEA5455),
-                                  thickness: 3,
-                                )),
-                          ),
-                          SizedBox(height: 16),
-                          Center(
-                            child: Text(
-                              'تفاصيل الطلب',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                            Center(
+                              child: Container(
+                                  width: 70,
+                                  child: Divider(color: Color(0xff4A5060))),
+                            ),
+                            SizedBox(height: 10),
+                            Text(
+                              'المدير : أحمد أحمد محمد أحمد',
+                              style: TextStyle(fontSize: 18),
+                            ),
+                            Text(
+                              'الإدارة: السويدي',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            SizedBox(height: 16),
+                            Center(
+                              child: Container(
+                                  width: 180,
+                                  child: Divider(
+                                    color: Color(0xffEA5455),
+                                    thickness: 3,
+                                  )),
+                            ),
+                            SizedBox(height: 16),
+                            Center(
+                              child: Text(
+                                'تفاصيل الطلب',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
-                          ),
-                          SizedBox(height: 8),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              _buildDateField(context, 'من:', startDate,
-                                  (date) {
-                                setState(() {
-                                  startDate = date;
-                                  print(formatDate(startDate));
-                                });
-                              }),
-                              Visibility(
-                                visible: !_isPartialVacationSelected,
-                                child: _buildDateField(context, 'إلى:', endDate,
+                            SizedBox(height: 8),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                _buildDateField(context, 'من:', startDate,
                                     (date) {
                                   setState(() {
-                                    endDate = date;
-                                    print(formatDate(endDate));
+                                    startDate = date;
+                                    print(formatDate(startDate));
                                   });
                                 }),
-                              )
-                            ],
-                          ),
-                          SizedBox(height: 8),
-                          Row(
-                            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  Text('النوع: '),
-                                  DropdownButton<String>(
-                                    value: (_isPartialVacationSelected
-                                            ? PartialVacationType.containsKey(
-                                                selectedVacationType)
-                                            : transactionVacationType
-                                                .containsKey(
-                                                    selectedVacationType))
-                                        ? selectedVacationType
-                                        : null, // Ensure valid selection
-                                    items: (_isPartialVacationSelected
-                                            ? PartialVacationType
-                                            : transactionVacationType)
-                                        .keys
-                                        .map((String key) {
-                                      return DropdownMenuItem(
-                                        value: key,
-                                        child: Text(key),
-                                      );
-                                    }).toList(),
-                                    hint: Text('اختر نوع الإجازة'),
-                                    onChanged: (value) {
-                                      setState(() {
-                                        selectedVacationType = value!;
-                                        mappedVacationType =
-                                            _isPartialVacationSelected
-                                                ? PartialVacationType[value]!
-                                                : transactionVacationType[
-                                                    value]!;
+                                Visibility(
+                                  visible: !_isPartialVacationSelected,
+                                  child: _buildDateField(
+                                      context, 'إلى:', endDate, (date) {
+                                    setState(() {
+                                      endDate = date;
+                                      print(formatDate(endDate));
+                                    });
+                                  }),
+                                )
+                              ],
+                            ),
+                            SizedBox(height: 8),
+                            Row(
+                              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text('النوع: '),
+                                    DropdownButton<String>(
+                                      value: (_isPartialVacationSelected
+                                              ? PartialVacationType.containsKey(
+                                                  selectedVacationType)
+                                              : transactionVacationType
+                                                  .containsKey(
+                                                      selectedVacationType))
+                                          ? selectedVacationType
+                                          : null, // Ensure valid selection
+                                      items: (_isPartialVacationSelected
+                                              ? PartialVacationType
+                                              : transactionVacationType)
+                                          .keys
+                                          .map((String key) {
+                                        return DropdownMenuItem(
+                                          value: key,
+                                          child: Text(key),
+                                        );
+                                      }).toList(),
+                                      hint: Text('اختر نوع الإجازة'),
+                                      onChanged: (value) {
+                                        setState(() {
+                                          selectedVacationType = value!;
+                                          mappedVacationType =
+                                              _isPartialVacationSelected
+                                                  ? PartialVacationType[value]!
+                                                  : transactionVacationType[
+                                                      value]!;
 
-                                        // 🖨 Print selected values
-                                        print(
-                                            'Selected Arabic Type: $selectedVacationType');
-                                        print(
-                                            'Mapped English Type: $mappedVacationType');
-                                      });
-                                    },
-                                  ),
-                                  SizedBox(width: 16),
-                                  Row(
-                                    children: [
-                                      Checkbox(
-                                        value: _isPartialVacationSelected,
-                                        onChanged: (value) {
-                                          setState(() {
-                                            _isPartialVacationSelected = value!;
-                                            selectedVacationType =
-                                                ''; // Reset selection
-                                            mappedVacationType =
-                                                ''; // Reset mapped value
+                                          // 🖨 Print selected values
+                                          print(
+                                              'Selected Arabic Type: $selectedVacationType');
+                                          print(
+                                              'Mapped English Type: $mappedVacationType');
+                                        });
+                                      },
+                                    ),
+                                    SizedBox(width: 16),
+                                    Row(
+                                      children: [
+                                        Checkbox(
+                                          value: _isPartialVacationSelected,
+                                          onChanged: (value) {
+                                            setState(() {
+                                              _isPartialVacationSelected =
+                                                  value!;
+                                              endDate = startDate;
+                                              selectedVacationType =
+                                                  ''; // Reset selection
+                                              mappedVacationType =
+                                                  ''; // Reset mapped value
 
-                                            // 🖨 Print checkbox state
-                                            print(
-                                                'Is Partial Vacation Selected: $_isPartialVacationSelected');
-                                          });
-                                        },
-                                      ),
-                                      Text('إجازة جزئية'),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 8),
-                          Row(
-                            children: [
-                              Text('البديل: '),
-                              DropdownButton<String>(
-                                menuMaxHeight: 200,
-                                value: selectedEmployeeName,
-                                hint: Text('اختر اسم الموظف'),
-                                items: provider.employees.map((employee) {
-                                  return DropdownMenuItem(
-                                    value: employee.employeeName,
-                                    child: Text("${employee.employeeName}"),
-                                    onTap: () {
-                                      substituteEmployeeId =
-                                          employee.employeeId;
-                                      print(
-                                          'Selected Employee ID: $substituteEmployeeId');
-                                    },
-                                  );
-                                }).toList(),
-                                onChanged: (value) {
-                                  setState(() {
-                                    selectedEmployeeName = value!;
-                                    print('Selected Employee: $value');
-                                  });
-                                },
-                              )
-                            ],
-                          ),
-                        ],
+                                              // 🖨 Print checkbox state
+                                              print(
+                                                  'Is Partial Vacation Selected: $_isPartialVacationSelected');
+                                            });
+                                          },
+                                        ),
+                                        Text('إجازة جزئية'),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 8),
+                            Row(
+                              children: [
+                                Text('البديل: '),
+                                DropdownButton<String>(
+                                  menuMaxHeight: 200,
+                                  value: selectedEmployeeName,
+                                  hint: Text('اختر اسم الموظف'),
+                                  items: provider.employees.map((employee) {
+                                    return DropdownMenuItem(
+                                      value: employee.employeeName,
+                                      child: Text("${employee.employeeName}"),
+                                      onTap: () {
+                                        substituteEmployeeId =
+                                            employee.employeeId;
+                                        print(
+                                            'Selected Employee ID: $substituteEmployeeId');
+                                      },
+                                    );
+                                  }).toList(),
+                                  onChanged: (value) {
+                                    setState(() {
+                                      selectedEmployeeName = value!;
+                                      print('Selected Employee: $value');
+                                    });
+                                  },
+                                )
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-                Spacer(),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 32.0, vertical: 64),
-                  child: Center(
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (startDate == null || endDate == null) {
-                          DialogHelper.show(context, 'خطأ',
-                              'يرجى إدخال تاريخ البدء و الانتهاء', Colors.red);
-                          return;
-                        }
-                        sendRequestProvider.sendRequestProv(
-                          context,
-                          selectedButton,
-                          _isPartialVacationSelected
-                              ? PartialVacationType[selectedVacationType] ??
-                                  '' // Use PartialVacationType if checked
-                              : transactionVacationType[selectedVacationType] ??
-                                  '', // Otherwise, use transactionVacationType,
-                          startDate,
-                          endDate,
-                          substituteEmployeeId, // SubstituteEmployeeId
-                          3, // Employee ID from token
-                          selectedButton == "مأمورية" ? ['', ''] : null,
-                        );
-                      },
-                      style: ElevatedButton.styleFrom(
-                        minimumSize: Size(double.infinity, 50),
-                        backgroundColor: Colors.black,
-                      ),
-                      child: Text(
-                        'إرسال الطلب',
-                        style: TextStyle(color: Colors.white),
+                  Spacer(),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 32.0, vertical: 64),
+                    child: Center(
+                      child: ElevatedButton(
+                        onPressed: () {
+                          if (startDate == null) {
+                            DialogHelper.show(context, 'خطأ',
+                                'يرجى إدخال تاريخ البدء', Colors.red);
+                            return;
+                          }
+                          sendRequestProvider.sendRequestProv(
+                            context,
+                            selectedButton,
+                            _isPartialVacationSelected
+                                ? PartialVacationType[selectedVacationType] ??
+                                    '' // Use PartialVacationType if checked
+                                : transactionVacationType[
+                                        selectedVacationType] ??
+                                    '', // Otherwise, use transactionVacationType,
+                            startDate,
+                            endDate,
+                            substituteEmployeeId, // SubstituteEmployeeId
+                            3, // Employee ID from token
+                            selectedButton == "مأمورية" ? ['', ''] : null,
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: Size(double.infinity, 50),
+                          backgroundColor: Colors.black,
+                        ),
+                        child: Text(
+                          'إرسال الطلب',
+                          style: TextStyle(color: Colors.white),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          );
-        },
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -364,19 +371,12 @@ class _RequestCreationScreenState extends State<RequestCreationScreen> {
           onTap: () async {
             DateTime? pickedDate = await showDatePicker(
               context: context,
-              initialDate: DateTime.now(),
-              firstDate: DateTime.now(),
+              initialDate: SynchronizedTime.now(),
+              firstDate: SynchronizedTime.now(),
               lastDate: DateTime(2100),
             );
             if (pickedDate != null) {
               onDateSelected(pickedDate);
-            } else {
-              DialogHelper.show(
-                context,
-                'خطأ',
-                'يرجى إدخال تاريخ $label',
-                Colors.red,
-              );
             }
           },
           child: Container(
